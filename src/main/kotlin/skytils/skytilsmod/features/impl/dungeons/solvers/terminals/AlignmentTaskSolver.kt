@@ -71,8 +71,8 @@ object AlignmentTaskSolver {
         if (mc.objectMouseOver?.entityHit is EntityItemFrame) {
             val frame = mc.objectMouseOver.entityHit as EntityItemFrame
             for (space in grid) {
-                if (space.type == SpaceType.PATH && space.framePos == frame.hangingPosition) {
-                    if (frame.rotation == directionSet[space.coords]) {
+                if (space.type == SpaceType.PATH && space.framePos == frame.hangingPosition
+                    && frame.rotation == directionSet[space.coords]) {
                         event.isCanceled = true
                         return
                     }
