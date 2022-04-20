@@ -857,6 +857,13 @@ object Config : Vigilant(
     var alignmentTerminalSolver = false
 
     @Property(
+        type = PropertyType.SWITCH, name = "Block Misclicks on Alignment Solver",
+        description = "If Item Frame Alignment Solver enabled, also blocks misclicks.",
+        category = "Dungeons", subcategory = "Terminal Solvers"
+    )
+    var alignmentTerminalBlockMisclicks = false
+
+    @Property(
         type = PropertyType.SWITCH, name = "Shoot the Target Solver",
         description = "Shows all the shot blocks on the device in Floor 7.",
         category = "Dungeons", subcategory = "Terminal Solvers"

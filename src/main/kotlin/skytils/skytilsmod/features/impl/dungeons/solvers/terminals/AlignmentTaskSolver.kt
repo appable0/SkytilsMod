@@ -18,6 +18,8 @@
 
 package skytils.skytilsmod.features.impl.dungeons.solvers.terminals
 
+import gg.essential.universal.UChat
+import net.minecraft.entity.item.EntityItem
 import net.minecraft.entity.item.EntityItemFrame
 import net.minecraft.init.Blocks
 import net.minecraft.init.Items
@@ -26,11 +28,13 @@ import net.minecraft.util.BlockPos
 import net.minecraft.util.EnumFacing
 import net.minecraft.util.Vec3
 import net.minecraftforge.client.event.RenderWorldLastEvent
+import net.minecraftforge.event.entity.player.EntityInteractEvent
 import net.minecraftforge.event.world.WorldEvent
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
 import skytils.skytilsmod.Skytils
 import skytils.skytilsmod.Skytils.Companion.mc
+import skytils.skytilsmod.events.impl.ClickEvent
 import skytils.skytilsmod.features.impl.dungeons.DungeonFeatures
 import skytils.skytilsmod.features.impl.dungeons.DungeonTimer
 import skytils.skytilsmod.utils.RenderUtil
@@ -59,6 +63,23 @@ object AlignmentTaskSolver {
     private val directionSet = HashMap<Point, Int>()
 
     private var ticks = 0
+
+    @SubscribeEvent
+    fun onRightClick(event: ClickEvent.RightClickEvent) {
+        if (!Skytils.config.alignmentTerminalSolver || !Skytils.config.alignmentTerminalBlockMisclicks
+            || !Utils.inDungeons || !Utils.equalsOneOf(DungeonFeatures.dungeonFloor, "F7", "M7")) return
+        if (mc.objectMouseOver?.entityHit is EntityItemFrame) {
+            val frame = mc.objectMouseOver.entityHit as EntityItemFrame
+            for (space in grid) {
+                if (space.type == SpaceType.PATH && space.framePos == frame.hangingPosition) {
+                    if (frame.rotation == directionSet[space.coords]) {
+                        event.isCanceled = true
+                        return
+                    }
+                }
+            }
+        }
+    }
 
     @SubscribeEvent
     fun onTick(event: TickEvent.ClientTickEvent) {

@@ -23,6 +23,7 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 import org.apache.commons.codec.binary.Base64;
 import org.spongepowered.asm.mixin.Mixin;
@@ -32,6 +33,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import skytils.skytilsmod.Skytils;
 import skytils.skytilsmod.core.GuiManager;
+import skytils.skytilsmod.events.impl.ClickEvent;
 import skytils.skytilsmod.utils.ItemUtil;
 import skytils.skytilsmod.utils.Utils;
 import skytils.skytilsmod.utils.graphics.ScreenRenderer;
@@ -44,6 +46,22 @@ public abstract class MixinMinecraft {
     private final Minecraft $this = (Minecraft) (Object) this;
     @Shadow
     public EntityPlayerSP thePlayer;
+
+    /**
+     * Taken from Skyblock-Client under GNU Affero GPL 3.0
+     * https://github.com/Harry282/Skyblock-Client/blob/main/LICENSE
+     *
+     * @author Harry282
+     */
+    @Inject(method = "clickMouse", at = @At("HEAD"), cancellable = true)
+    private void onLeftClick(CallbackInfo ci) {
+        if (MinecraftForge.EVENT_BUS.post(new ClickEvent.LeftClickEvent())) ci.cancel();
+    }
+
+    @Inject(method = "rightClickMouse", at = @At("HEAD"), cancellable = true)
+    private void onRightClick(CallbackInfo ci) {
+        if (MinecraftForge.EVENT_BUS.post(new ClickEvent.RightClickEvent())) ci.cancel();
+    }
 
     /**
      * Taken from Skyblockcatia under MIT License
